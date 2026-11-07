@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LearnVerse — Free Python, Java, SQL, AI & ML Learning Galaxy</title>
+  <meta name="description" content="LearnVerse is a free immersive 3D learning website. Study Python, Java, SQL, AI, Machine Learning, LLMs, Prompt Engineering and RAG — with practice sessions for every topic."/>
+  <meta property="og:title" content="LearnVerse — Free Learning Galaxy"/>
+  <meta property="og:description" content="Study Python, Java, SQL, AI, ML, LLMs, Prompt Engineering and RAG for free — with hands-on practice."/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#02060F"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Three.js import map (pinned) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- ── 3D Canvas ──────────────────────────────────────── -->
+<canvas id="galaxy-canvas" aria-label="Interactive 3D Learning Galaxy" role="img"></canvas>
+
+<!-- ── Algo hover card (ML satellites) ───────────────── -->
+<div id="algo-card" style="position:fixed;bottom:32px;right:32px;z-index:500;width:280px;padding:1.4rem;background:rgba(6,13,31,0.92);backdrop-filter:blur(24px);border:1px solid rgba(0,255,136,0.2);border-radius:16px;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;pointer-events:none;"></div>
+
+<!-- ── Navigation ────────────────────────────────────── -->
+<nav id="nav" aria-label="Main navigation">
+  <span class="nav-logo">Learn<span>Verse</span></span>
+  <div class="nav-links" role="list">
+    <button class="nav-link" onclick="scrollToSection('hero')"       role="listitem">Home</button>
+    <button class="nav-link" onclick="scrollToSection('section-python')"  role="listitem">Python</button>
+    <button class="nav-link" onclick="scrollToSection('section-java')"    role="listitem">Java</button>
+    <button class="nav-link" onclick="scrollToSection('section-sql')"     role="listitem">SQL</button>
+    <button class="nav-link" onclick="scrollToSection('section-ai')"      role="listitem">AI</button>
+    <button class="nav-link" onclick="scrollToSection('section-ml')"      role="listitem">ML</button>
+    <button class="nav-link" onclick="scrollToSection('section-llm')"     role="listitem">LLMs</button>
+    <button class="nav-link" onclick="scrollToSection('section-prompt')"  role="listitem">Prompts</button>
+    <button class="nav-link" onclick="scrollToSection('section-rag')"     role="listitem">RAG</button>
+  </div>
+  <div id="nav-progress" title="Scroll progress" aria-hidden="true">
+    <div id="nav-progress-fill"></div>
+  </div>
+</nav>
+
+<!-- ── Page wrapper ──────────────────────────────────── -->
+<div id="page">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HERO                                               -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section id="hero" aria-label="Hero">
+  <div class="hero-eyebrow">8 Subjects &nbsp;·&nbsp; Free Forever &nbsp;·&nbsp; No Login</div>
+  <h1 class="hero-title">
+    Learn the<br><span class="accent">Full AI Stack</span>
+  </h1>
+  <p class="hero-sub">
+    From <strong>Python basics</strong> to <strong>RAG pipelines</strong> — an immersive, scroll-driven galaxy where every planet is a subject with lessons, formulas, and hands-on practice.
+  </p>
+  <button class="btn-primary" onclick="scrollToSection('section-python')">
+    <i class="fa-solid fa-rocket"></i> Start Exploring
+  </button>
+  <div class="hero-chips">
+    <span class="chip" style="color:#4FC3F7;border-color:#4FC3F766"><i class="fa-brands fa-python"></i> Python</span>
+    <span class="chip" style="color:#FF8C42;border-color:#FF8C4266"><i class="fa-brands fa-java"></i> Java</span>
+    <span class="chip" style="color:#00E5FF;border-color:#00E5FF66"><i class="fa-solid fa-database"></i> SQL</span>
+    <span class="chip" style="color:#A78BFA;border-color:#A78BFA66"><i class="fa-solid fa-brain"></i> AI</span>
+    <span class="chip" style="color:#00FF88;border-color:#00FF8866"><i class="fa-solid fa-chart-line"></i> ML</span>
+    <span class="chip" style="color:#F472B6;border-color:#F472B666"><i class="fa-solid fa-microchip"></i> LLMs</span>
+    <span class="chip" style="color:#FBBF24;border-color:#FBBF2466"><i class="fa-solid fa-terminal"></i> Prompts</span>
+    <span class="chip" style="color:#2DD4BF;border-color:#2DD4BF66"><i class="fa-solid fa-magnifying-glass"></i> RAG</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SUBJECT SECTIONS (rendered by JS below)           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="subjects-container"></div>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ROADMAP                                           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section id="roadmap" aria-label="Learning Roadmap">
+  <div class="roadmap-inner">
+    <p class="sec-label" style="color:#00ff88;justify-content:center"><i class="fa-solid fa-map"></i>&nbsp;LEARNING ROADMAP</p>
+    <h2 class="sec-head" style="text-align:center">Your Galaxy Map</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:0.5rem">Click any planet to fly there instantly.</p>
+    <div class="roadmap-grid reveal" id="roadmap-grid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HOW TO STUDY                                      -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section id="how-to-study" aria-label="How to study">
+  <div class="hts-inner">
+    <p class="sec-label" style="color:#00ff88;justify-content:center"><i class="fa-solid fa-compass"></i>&nbsp;METHOD</p>
+    <h2 class="sec-head" style="text-align:center">How to Study</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:0.5rem">Three simple steps. Repeat for every topic.</p>
+    <div class="hts-grid reveal">
+      <div class="hts-card glass">
+        <div class="hts-num">01</div>
+        <div class="hts-icon" style="color:#4FC3F7"><i class="fa-solid fa-book-open"></i></div>
+        <div class="hts-title">Read the Topic</div>
+        <div class="hts-desc">Study the 5–6 bullet points for each subject. Understand the concept at a high level before touching code.</div>
+      </div>
+      <div class="hts-card glass">
+        <div class="hts-num">02</div>
+        <div class="hts-icon" style="color:#00FF88"><i class="fa-solid fa-laptop-code"></i></div>
+        <div class="hts-title">Do the Practice</div>
+        <div class="hts-desc">Every topic has 3–4 practice exercises. Build each one from scratch. Mark it done with the checkbox.</div>
+      </div>
+      <div class="hts-card glass">
+        <div class="hts-num">03</div>
+        <div class="hts-icon" style="color:#FBBF24"><i class="fa-solid fa-hammer"></i></div>
+        <div class="hts-title">Build a Mini Project</div>
+        <div class="hts-desc">Apply what you learned to one of the 6 mini projects. Combine topics — that is when understanding becomes skill.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MINI PROJECTS                                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section id="mini-projects" aria-label="Mini Projects">
+  <div class="mp-inner">
+    <p class="sec-label reveal" style="color:#00ff88"><i class="fa-solid fa-folder-open"></i>&nbsp;BUILD IT</p>
+    <h2 class="sec-head reveal">Mini Projects</h2>
+    <p class="text" style="color:var(--muted);font-size:0.9rem;margin-bottom:0" >Six real-world projects that combine what you learned across topics.</p>
+    <div class="mp-grid reveal" id="mp-grid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- FAQ                                               -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section id="faq" aria-label="Frequently Asked Questions">
+  <div class="faq-inner">
+    <p class="sec-label reveal" style="color:#00ff88;justify-content:center"><i class="fa-solid fa-circle-question"></i>&nbsp;FAQ</p>
+    <h2 class="sec-head reveal" style="text-align:center">Student Questions</h2>
+    <div class="faq-list reveal" id="faq-list" role="list"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- FOOTER                                            -->
+<!-- ═══════════════════════════════════════════════════ -->
+<footer aria-label="Footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Learn<span>Verse</span></div>
+      <p class="footer-tagline">A free, immersive 3D learning galaxy for Python, Java, SQL, AI, Machine Learning, LLMs, Prompt Engineering and RAG.</p>
+      <div style="display:flex;gap:.75rem;margin-top:1.2rem">
+        <a href="#" class="footer-social" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="footer-social" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="footer-social" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="footer-social" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Subjects</div>
+      <ul class="footer-links">
+        <li><a href="#" onclick="scrollToSection('section-python')">Python</a></li>
+        <li><a href="#" onclick="scrollToSection('section-java')">Java &amp; Java 8</a></li>
+        <li><a href="#" onclick="scrollToSection('section-sql')">SQL &amp; Databases</a></li>
+        <li><a href="#" onclick="scrollToSection('section-ai')">AI Fundamentals</a></li>
+        <li><a href="#" onclick="scrollToSection('section-ml')">Machine Learning</a></li>
+        <li><a href="#" onclick="scrollToSection('section-llm')">LLM Fundamentals</a></li>
+        <li><a href="#" onclick="scrollToSection('section-prompt')">Prompt Engineering</a></li>
+        <li><a href="#" onclick="scrollToSection('section-rag')">RAG &amp; Its Types</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Stay Updated</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem">New topics and practice sessions drop regularly.</p>
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="your@email.com" aria-label="Email for newsletter"/>
+        <button class="newsletter-btn" onclick="subscribeNewsletter(this)">JOIN</button>
+      </div>
+      <div style="margin-top:1.5rem">
+        <div class="footer-col-title">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="#roadmap">Learning Roadmap</a></li>
+          <li><a href="#mini-projects">Mini Projects</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 LearnVerse · Free forever · No login required</span>
+    <span class="footer-copy">Built with Three.js · Plain HTML/CSS/JS</span>
+  </div>
+</footer>
+
+</div><!-- end #page -->
+
+<!-- ── Scripts ──────────────────────────────────────── -->
+<script>
+// ── Helpers ──────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Load progress checkboxes from localStorage ───────
+function saveProgress(key, val) {
+  try { localStorage.setItem('lv_' + key, val ? '1' : '0'); } catch(e){}
+}
+function loadProgress(key) {
+  try { return localStorage.getItem('lv_' + key) === '1'; } catch(e){ return false; }
+}
+
+// ── HTML entity escaper (needed for code in innerHTML) ─
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Toggle topic accordion ────────────────────────────
+function toggleTopic(sid, idx) {
+  const item = document.getElementById('topic-' + sid + '-' + idx);
+  const body = document.getElementById('topic-body-' + sid + '-' + idx);
+  if (!item || !body) return;
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// ── Render subject sections ───────────────────────────
+function renderSubjects(subjects) {
+  const container = document.getElementById('subjects-container');
+
+  subjects.forEach((s, si) => {
+    const sec = document.createElement('section');
+    sec.id = 'section-' + s.id;
+    sec.className = 'subject-section';
+    sec.setAttribute('aria-label', s.title + ' subject');
+
+    // Build topics accordion
+    let topicsHTML = '';
+    if (s.topics && s.topics.length) {
+      const accordionItems = s.topics.map((t, ti) => {
+        const itemId   = 'topic-' + s.id + '-' + ti;
+        const bodyId   = 'topic-body-' + s.id + '-' + ti;
+        const openCls  = ti === 0 ? ' open' : '';
+        const bulletRows = t.points.map(p => `<li>${p}</li>`).join('');
+        const codeBlock = t.code ? `
+          <div class="code-block" style="border-color:${s.color}44">
+            <div class="code-header" style="background:${s.color}12">
+              <div class="code-dots"><span></span><span></span><span></span></div>
+              <span class="code-lang-tag">${escapeHtml(t.code.lang)}</span>
+              <span class="code-label-text">${escapeHtml(t.code.label)}</span>
+            </div>
+            <pre><code>${escapeHtml(t.code.lines)}</code></pre>
+          </div>` : '';
+        return `
+          <div class="topic-item${openCls}" id="${itemId}">
+            <button class="topic-header" onclick="toggleTopic('${s.id}',${ti})" aria-expanded="${ti===0}">
+              <span class="topic-num">0${ti+1}</span>
+              <span class="topic-name">${t.name}</span>
+              <span class="topic-accent-bar" style="background:${s.color}"></span>
+              <i class="fa-solid fa-chevron-down topic-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="topic-body${openCls}" id="${bodyId}">
+              <div class="topic-body-inner">
+                <ul class="bullet-list">${bulletRows}</ul>
+                ${codeBlock}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      topicsHTML = `
+        <div class="topics-accordion reveal" aria-label="${s.title} sub-topics">
+          ${accordionItems}
+        </div>`;
+    }
+
+    // Practice grid
+    const practiceHTML = s.practice ? `
+      <div class="reveal">
+        <div class="practice-section-title" style="color:${s.color}">
+          <i class="fa-solid fa-laptop-code"></i> PRACTICE SESSION
+        </div>
+        <div class="practice-grid">
+          ${s.practice.map((p,pi)=>{
+            const key  = s.id + '_' + pi;
+            const done = loadProgress(key);
+            return `
+              <div class="practice-item" id="pi-${key}">
+                <div class="practice-item-header">
+                  <span class="practice-title">${p.title}</span>
+                  <input type="checkbox" class="done-check" ${done?'checked':''} aria-label="Mark ${p.title} as done"
+                    onchange="toggleDone('${key}',this)"/>
+                </div>
+                <div class="practice-desc">${p.desc}</div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+
+    // ML extras
+    let extraHTML = '';
+    if (s.id === 'ml' && s.algorithms) {
+      extraHTML += `
+        <div class="ml-sub-card glass reveal" style="border-left:3px solid ${s.color}33">
+          <p class="sec-label" style="color:${s.color}"><i class="fa-solid fa-star"></i>&nbsp;SUPERVISED LEARNING — 8 CORE ALGORITHMS</p>
+          <p style="font-size:.82rem;color:var(--muted);margin:.5rem 0 1rem">Hover each card to highlight it. Formula + 6 formation steps shown.</p>
+          <div class="algo-grid">
+            ${s.algorithms.map((alg,ai)=>`
+              <div class="algo-card" style="border-color:${alg.color}33;" onmouseenter="highlightAlgo(${ai})" onmouseleave="unhighlightAlgo()">
+                <div class="algo-name" style="color:${alg.color}">${alg.name}</div>
+                <div class="algo-use">${alg.use}</div>
+                <div class="algo-formula" style="color:${alg.color}">${alg.formula}</div>
+                <ol class="algo-steps">${alg.steps.map((st,si2)=>`<li data-n="${si2+1}">${st}</li>`).join('')}</ol>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="ml-sub-card glass reveal" style="border-left:3px solid rgba(170,170,255,0.3);margin-top:1rem">
+          <p class="sec-label" style="color:#aaaaff"><i class="fa-solid fa-circle-nodes"></i>&nbsp;UNSUPERVISED LEARNING</p>
+          <ul class="bullet-list" style="margin:0.75rem 0">${s.unsupervised.map(u=>`<li>${u}</li>`).join('')}</ul>
+          <div class="practice-item" style="margin-top:.75rem">
+            <div class="practice-title" style="color:#aaaaff">Practice</div>
+            <div class="practice-desc">${s.unsupervisedPractice}</div>
+          </div>
+        </div>
+        <div class="ml-sub-card glass reveal" style="border-left:3px solid rgba(255,215,0,0.3);margin-top:1rem">
+          <p class="sec-label" style="color:#ffd700"><i class="fa-solid fa-star"></i>&nbsp;REINFORCEMENT LEARNING</p>
+          <ul class="bullet-list" style="margin:0.75rem 0">
+            <li>Agent, Environment, State, Action &amp; Reward loop</li>
+            <li>Q-Learning update rule: know the formula by heart</li>
+            <li>Exploration vs Exploitation (ε-greedy policy)</li>
+          </ul>
+          <div class="algo-formula" style="color:#ffd700;background:rgba(0,0,0,.3);padding:.5rem .8rem;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.85rem;margin:.75rem 0">${s.rlFormula}</div>
+          <div class="practice-item">
+            <div class="practice-title" style="color:#ffd700">Practice</div>
+            <div class="practice-desc">${s.rlPractice}</div>
+          </div>
+        </div>`;
+    }
+    if (s.id === 'rag' && s.ragTypes) {
+      extraHTML += `
+        <div class="ml-sub-card glass reveal" style="border-left:3px solid ${s.color}33;margin-top:1.5rem">
+          <p class="sec-label" style="color:${s.color}"><i class="fa-solid fa-layer-group"></i>&nbsp;6 RAG TYPES AT A GLANCE</p>
+          <div class="rag-types">
+            ${s.ragTypes.map(rt=>`
+              <div class="rag-node" style="border-color:${rt.color}33">
+                <div class="rag-node-name" style="color:${rt.color}">${rt.name}</div>
+                <div class="rag-node-desc">${rt.desc}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    sec.innerHTML = `
+      <div class="subject-inner">
+        <div class="reveal">
+          <p class="sec-label" style="color:${s.color}">
+            <i class="${s.icon}"></i>&nbsp;//&nbsp;0${si+1}.&nbsp;${s.title.toUpperCase()}
+          </p>
+          <h2 class="sec-head">${s.title}</h2>
+          <p class="sec-sub">${s.subtitle}</p>
+        </div>
+        ${topicsHTML}
+        ${practiceHTML}
+        ${extraHTML}
+      </div>`;
+    container.appendChild(sec);
+  });
+}
+
+function toggleDone(key, cb) {
+  saveProgress(key, cb.checked);
+  const item = document.getElementById('pi-' + key);
+  if (item) item.style.opacity = cb.checked ? '0.55' : '1';
+}
+
+// ── Render roadmap ────────────────────────────────────
+function renderRoadmap(subjects) {
+  const grid = document.getElementById('roadmap-grid');
+  const iconMap = { python:'🐍', java:'☕', sql:'🗄️', ai:'🧠', ml:'🔬', llm:'💗', prompt:'⌨️', rag:'🔗' };
+  subjects.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'roadmap-dot';
+    btn.setAttribute('aria-label', 'Fly to ' + s.title);
+    btn.style.setProperty('--c', s.color);
+    btn.innerHTML = `
+      <div class="roadmap-dot-num">0${i+1}</div>
+      <div class="roadmap-dot-icon" style="color:${s.color}">${iconMap[s.id]||'⭐'}</div>
+      <div class="roadmap-dot-label" style="color:#fff">${s.title}</div>
+    `;
+    btn.onclick = () => {
+      scrollToSection('section-' + s.id);
+      document.querySelectorAll('.roadmap-dot').forEach(d=>d.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ── Render mini projects ──────────────────────────────
+function renderMiniProjects(projects) {
+  const grid = document.getElementById('mp-grid');
+  projects.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'mp-card';
+    card.style.borderTop = '3px solid ' + p.color + '55';
+    card.innerHTML = `
+      <div class="mp-icon" style="color:${p.color}"><i class="${p.icon}"></i></div>
+      <div class="mp-title">${p.title}</div>
+      <div class="mp-desc">${p.desc}</div>
+      <div class="mp-tags">${p.tags.map(t=>`<span class="mp-tag">${t}</span>`).join('')}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── Render FAQ ────────────────────────────────────────
+function renderFAQ(faq) {
+  const list = document.getElementById('faq-list');
+  faq.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'faq-item';
+    div.setAttribute('role', 'listitem');
+    div.innerHTML = `
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        ${item.q}
+        <i class="faq-icon fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a" role="region">
+        <div class="faq-a-inner">${item.a}</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+  btn.setAttribute('aria-expanded', !isOpen);
+}
+
+// ── Newsletter ────────────────────────────────────────
+function subscribeNewsletter(btn) {
+  const input = btn.previousElementSibling;
+  if (input && input.value.includes('@')) {
+    btn.textContent = '✓ DONE';
+    btn.style.background = '#00FF88';
+    input.disabled = true;
+  }
+}
+
+// ── IntersectionObserver reveals ─────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }});
+}, { threshold: 0.12 });
+
+// ── Active nav link ───────────────────────────────────
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id.replace('section-', '');
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[onclick*="${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+
+// ── WebGL fallback ────────────────────────────────────
+function checkWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl') || c.getContext('experimental-webgl'));
+  } catch(e) { return false; }
+}
+
+// ── Highlight algo card on hover ──────────────────────
+function highlightAlgo(idx) {
+  const cards = document.querySelectorAll('.algo-card');
+  cards.forEach((c, i) => { c.style.opacity = i === idx ? '1' : '0.45'; c.style.transform = i === idx ? 'translateY(-4px) scale(1.01)' : ''; });
+}
+function unhighlightAlgo() {
+  document.querySelectorAll('.algo-card').forEach(c => { c.style.opacity = '1'; c.style.transform = ''; });
+}
+
+// ── Bootstrap ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Dynamic content
+  // Import data from content.js module (loaded via type=module below)
+  // content is available via window.LV_DATA set by the module loader
+  const tryInit = () => {
+    if (window.LV_DATA) {
+      const { SUBJECTS, MINI_PROJECTS, FAQ } = window.LV_DATA;
+      renderSubjects(SUBJECTS);
+      renderRoadmap(SUBJECTS);
+      renderMiniProjects(MINI_PROJECTS);
+      renderFAQ(FAQ);
+
+      // Observe reveals
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+        document.querySelectorAll('.subject-section').forEach(el => navObs.observe(el));
+        // Restore done states opacity
+        document.querySelectorAll('.practice-item').forEach(item => {
+          const cb = item.querySelector('.done-check');
+          if (cb && cb.checked) item.style.opacity = '0.55';
+        });
+      }, 100);
+
+      if (!checkWebGL()) document.body.classList.add('no-webgl');
+    } else {
+      setTimeout(tryInit, 50);
+    }
+  };
+  tryInit();
+});
+</script>
+
+<!-- Module loader: exposes content data + boots Three.js scene -->
+<script type="module">
+  import { SUBJECTS, MINI_PROJECTS, FAQ } from './content.js';
+  window.LV_DATA = { SUBJECTS, MINI_PROJECTS, FAQ };
+
+  // Boot Three.js scene after first paint
+  requestAnimationFrame(() => {
+    import('./main.js').catch(err => console.warn('3D scene failed to load:', err));
+  });
+</script>
+
+</body>
+</html>
